@@ -215,7 +215,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
     if (playerSum >= 21 && !checkingAce) {
       window.setTimeout(() => {
         getWinner()
-      }, 4000)
+      }, 3000)
     }
   }, [playerSum])
 
@@ -471,7 +471,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                         layout="fixed"
                         width={160}
                         height={200}
-                        loading="lazy"
+                        priority
                       />
                     </div>
                   )
@@ -488,7 +488,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                         layout="fixed"
                         width={160}
                         height={200}
-                        loading="lazy"
+                        priority
                       />
                     </div>
                   )
@@ -584,7 +584,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                       layout="fixed"
                       width={160}
                       height={220}
-                      loading="lazy"
+                      priority
                     />
                   </div>
                 )
