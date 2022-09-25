@@ -262,7 +262,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
       setHouseCards(housecurrentCards)
 
       let playerValue = 0
-      let playerCurrentCards: string[] = []
+      const playerCurrentCards: string[] = []
 
       for (let i = 0; i < 2; i++) {
         const playerCard = deckData.pop()
