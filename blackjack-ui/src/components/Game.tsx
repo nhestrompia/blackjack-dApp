@@ -54,7 +54,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
     }
   }, [])
 
-  let deck: string[] = []
+  const deck: string[] = []
 
   const withdrawBet = async () => {
     try {
@@ -228,7 +228,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
 
       setIsStand(false)
       let houseValue = 0
-      let housecurrentCards: string[] = []
+      const housecurrentCards: string[] = []
       for (let i = 0; i < 2; i++) {
         const dealerCard = deckData?.pop()
 

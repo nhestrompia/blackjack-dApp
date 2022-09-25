@@ -4,7 +4,6 @@ import truncateEthAddress from "truncate-eth-address"
 import { BigNumber, Contract, ethers, providers, utils } from "ethers"
 import { NextRouter, useRouter } from "next/router"
 
-// @ts-ignore
 import WalletConnect from "@walletconnect/web3-provider"
 
 interface IProps {
