@@ -459,7 +459,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           )}
           <h1></h1>
 
-          {!isCanWithdraw && roundText[0] !== "Wait for" && (
+          {!isCanWithdraw && roundText[0] !== "Wait for" && account && (
             <button
               className={`${
                 isGameActive ? "hidden" : "md:mt-4"
