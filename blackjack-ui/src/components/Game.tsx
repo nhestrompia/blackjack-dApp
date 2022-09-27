@@ -104,18 +104,6 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
     }
   }
 
-  const checkPlayer = async () => {
-    const blackjackContract = new Contract(
-      BLACKJACK_CONTRACT_ADDRESS,
-      BLACKJACK_CONTRACT_ABI,
-      library
-    )
-
-    const check = blackjackContract.players(account)
-
-    console.log("check", check)
-  }
-
   useEffect(() => {
     if (isGameActive === false) {
       setPlayerCards([])
