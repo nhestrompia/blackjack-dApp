@@ -54,6 +54,14 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (!account) {
+      setRoundText(["Connect", "Wallet"])
+    } else {
+      setRoundText([])
+    }
+  }, [account])
+
   const deck: string[] = []
 
   const withdrawBet = async () => {
