@@ -18,7 +18,7 @@ const Home: NextPage = () => {
         <meta name="description" content="blackjack dApp" />
       </Head>
 
-      <main className="bg-[#144b1e]  pb-2.5 text-white">
+      <main className="bg-[#144b1e]  pb-1 text-white">
         <nav className="px-8 md:px-2 fixed w-full z-20 top-0 left-0 py-3.5    ">
           <div className="container   flex flex-wrap justify-between items-center mx-auto">
             <h1 className="text-2xl  leading-normal font-bold  ">Blackjack</h1>

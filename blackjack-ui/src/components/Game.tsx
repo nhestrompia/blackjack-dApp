@@ -19,11 +19,6 @@ interface TransactionResponse {
   hash: string
 }
 
-//TODO last round doesnt show what happens
-//TODO show points instead of gameover to let user know
-//TODO withdraw button bug after initial round since unlockbet happens
-//TODO withdraw doesnt show at the end
-
 export const Game: React.FC<IProps> = ({ library, account }) => {
   const [playerSum, setPlayerSum] = useState<number>(0)
   const [houseSum, setHouseSum] = useState<number>(0)
@@ -71,7 +66,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         signer
       )
       if (score! > 0) {
-        const tx = await toast.promise(
+        const tx: TransactionResponse = await toast.promise(
           blackjackContract.withdrawBet(ethers.utils.parseEther("0.02")),
 
           {
@@ -80,8 +75,9 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
             error: "Something went wrong 🤯",
           }
         )
+        const confirmation = await library.waitForTransaction(tx.hash)
       } else if (score == 0) {
-        const tx = await toast.promise(
+        const tx: TransactionResponse = await toast.promise(
           blackjackContract.withdrawBet(ethers.utils.parseEther("0.01")),
 
           {
@@ -90,20 +86,26 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
             error: "Something went wrong 🤯",
           }
         )
-        toast.info("Game Over. If you want to play again press Start Game", {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: true,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-        })
+        const confirmation = await library.waitForTransaction(tx.hash)
       }
+      setRoundText(["Play", "Again"])
+
       setIsCanWithdraw(false)
     } catch (err) {
       console.error(err)
     }
+  }
+
+  const checkPlayer = async () => {
+    const blackjackContract = new Contract(
+      BLACKJACK_CONTRACT_ADDRESS,
+      BLACKJACK_CONTRACT_ABI,
+      library
+    )
+
+    const check = blackjackContract.players(account)
+
+    console.log("check", check)
   }
 
   useEffect(() => {
@@ -120,12 +122,24 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         library
       )
 
+      const signerAddress = signer.getAddress()
+
       const blackjackContract = new Contract(
         BLACKJACK_CONTRACT_ADDRESS,
         BLACKJACK_CONTRACT_ABI,
         signer
       )
       if (score! > 0) {
+        const data = {
+          from: signerAddress,
+          to: BLACKJACK_CONTRACT_ADDRESS,
+          value: ethers.utils.parseEther("0.01"),
+        }
+
+        const tx: TransactionResponse = await signer.sendTransaction(data)
+
+        const confirmation = await library.waitForTransaction(tx.hash)
+
         const endGame: TransactionResponse = await blackjackContract.endGame(
           account,
           ethers.utils.parseEther("0.02")
@@ -147,7 +161,9 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           ethers.utils.parseEther("0.00")
         )
         setIsCanWithdraw(false)
+        setRoundText(["Game", "Over"])
       }
+      setRoundText(["Play", "Again"])
     } catch (err) {
       console.error(err)
     }
@@ -348,9 +364,18 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         dealCards(tempDeck)
       }, 2000)
     } else {
-      setRoundText(["Your", `Score : ${score}`])
-      setIsGameActive(false)
       unlockBet()
+
+      window.setTimeout(() => {
+        if (score! > 0) {
+          setRoundText(["Wait for", "Withdraw"])
+        } else if (score === 0) {
+          setRoundText(["Wait for", "Withdraw"])
+        } else {
+          setRoundText(["Game", "Over"])
+        }
+        setIsGameActive(false)
+      }, 2000)
     }
   }
 
@@ -426,11 +451,11 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           )}
           <h1></h1>
 
-          {!isCanWithdraw && (
+          {!isCanWithdraw && roundText[0] !== "Wait for" && (
             <button
               className={`${
-                isGameActive ? "hidden" : "mt-4"
-              } p-4 hover:scale-110 transition duration-200`}
+                isGameActive ? "hidden" : "md:mt-4"
+              } p-4 mb-4 hover:scale-110 transition duration-200`}
               onClick={() => setIsModalOpen((prevState) => !prevState)}
             >
               <Image
@@ -538,12 +563,12 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
             <div
               className={`${roundText ? "" : " "} ${
                 roundText && roundText[0] === "It's a" ? "" : ""
-              } mt-10 w-1/3 ${
+              } mt-5 md:mt-10 w-1/3 ${
                 loading ? "opacity-60" : "opacity-20"
               }  flex justify-center `}
             >
               <Image
-                className={`${loading ? "animate-spin" : ""}`}
+                className={`${loading ? "animate-spin " : ""}`}
                 src={"/logo.svg"}
                 width={loading ? 90 : 56}
                 height={89}
@@ -596,7 +621,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
               </div>
             )}
           </div>
-          <h1 className="mt-1 font-roboto text-2xl">Player - {playerSum}</h1>
+          <h1 className="mt-2 font-roboto text-2xl">Player - {playerSum}</h1>
         </div>
 
         <div className="col-start-2  md:row-start-3 lg:row-start-1 lg:col-start-3   mt-4 mr-4 md:mr-0   flex justify-center  items-center  lg:mr-0 lg:flex-col lg:content-end">
