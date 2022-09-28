@@ -152,12 +152,13 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
 
         setIsCanWithdraw(true)
       } else {
-        const endGame = await blackjackContract.endGame(
+        const endGame: TransactionResponse = await blackjackContract.endGame(
           account,
           ethers.utils.parseEther("0.00")
         )
+        const endGameReceipt = await library.waitForTransaction(endGame.hash)
+
         setIsCanWithdraw(false)
-        setRoundText(["Game", "Over"])
       }
       setRoundText(["Play", "Again"])
     } catch (err) {
@@ -227,13 +228,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
   }
 
   useEffect(() => {
-    const checkingAce = checkAce()
-
-    if (playerSum >= 21 && !checkingAce) {
-      window.setTimeout(() => {
-        getWinner()
-      }, 2300)
-    }
+    checkAce()
   }, [playerSum])
 
   const dealCards = (deckData: string[]) => {
@@ -376,7 +371,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
               progress: 0,
             }
           )
-          setRoundText(["Wait for", "Withdraw"])
+          setRoundText(["Wait for", `Evaluation`])
         } else if (score === 0) {
           toast.info(
             "It was a close game but it ended in tie. Wait for withdraw button to come to get back your initial bet",
@@ -390,7 +385,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
               progress: 0,
             }
           )
-          setRoundText(["Wait for", "Withdraw"])
+          setRoundText(["Wait for", `Evaluation`])
         } else {
           toast.info(
             "It was a close game but you have lost it. Play again to earn back your 0.01 ETH ",
@@ -404,7 +399,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
               progress: 0,
             }
           )
-          setRoundText(["Game", "Over"])
+          setRoundText(["Wait for", `Evaluation`])
         }
         setIsGameActive(false)
       }, 2000)
@@ -657,7 +652,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         </div>
 
         <div className="col-start-2  md:row-start-3 lg:row-start-1 lg:col-start-3   mt-4 md:mt-8 mr-4 md:mr-0 gap-4  flex justify-center  items-center  lg:mr-0 lg:flex-col lg:content-end">
-          {isGameActive && playerSum > 0 && playerSum < 21 && (
+          {isGameActive && playerSum > 0 && (
             <button
               className="lg:px-8 hover:scale-110 mx-2 transition duration-200"
               onClick={getWinner}
