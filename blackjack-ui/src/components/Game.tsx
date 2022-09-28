@@ -364,10 +364,46 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
 
       window.setTimeout(() => {
         if (score! > 0) {
+          toast.info(
+            "You have won the game and extra 0.01 ETH! Wait for withdraw button to come",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
           setRoundText(["Wait for", "Withdraw"])
         } else if (score === 0) {
+          toast.info(
+            "It was a close game but it ended in tie. Wait for withdraw button to come to get back your initial bet",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
           setRoundText(["Wait for", "Withdraw"])
         } else {
+          toast.info(
+            "It was a close game but you have lost it. Play again to earn back your 0.01 ETH ",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
           setRoundText(["Game", "Over"])
         }
         setIsGameActive(false)
@@ -480,7 +516,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           )}
         </div>
         <div className=" md:col-start-2 flex flex-col justify-center items-center">
-          <h1 className=" p-1 text-2xl font-roboto mt-2 mb-8">Dealer</h1>
+          <h1 className=" p-1 text-2xl font-roboto mt-2 mb-6">Dealer</h1>
           <div className="flex flex-wrap lg:flex-nowrap justify-evenly lg:row-start-1 md:flex-row md:justify-center items-center md:gap-10 ">
             {houseCards?.length !== 0 ? (
               houseCards?.map((card, index) => {
@@ -496,7 +532,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                         src={isStand ? card : "/back.png"}
                         layout="fixed"
                         width={160}
-                        height={200}
+                        height={220}
                         priority
                       />
                     </div>
@@ -513,7 +549,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                         src={card}
                         layout="fixed"
                         width={160}
-                        height={200}
+                        height={220}
                         priority
                       />
                     </div>
@@ -526,7 +562,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                   src={"/back.png"}
                   layout="fixed"
                   width={160}
-                  height={200}
+                  height={220}
                   loading="lazy"
                 />
 
@@ -534,7 +570,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
                   src={"/back.png"}
                   layout="fixed"
                   width={160}
-                  height={200}
+                  height={220}
                   loading="lazy"
                 />
               </div>
@@ -546,7 +582,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
             setIsModalOpen={setIsModalOpen}
             startGame={startGame}
           />
-          <div className="flex flex-row w-full justify-evenly items-center ">
+          <div className="flex flex-row w-full -my-2 justify-evenly items-center ">
             {roundText && !loading && (
               <span
                 className={` text-3xl w-1/3 text-right ${
@@ -559,9 +595,9 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
             <div
               className={`${roundText ? "" : " "} ${
                 roundText && roundText[0] === "It's a" ? "" : ""
-              } mt-5 md:mt-10 w-1/3 ${
+              } mt-4 md:mt-10 w-1/3 ${
                 loading ? "opacity-60" : "opacity-20"
-              }  flex justify-center `}
+              } mb-5 md:mb-0 flex justify-center `}
             >
               <Image
                 className={`${loading ? "animate-spin " : ""}`}
@@ -620,7 +656,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           <h1 className="mt-2 font-roboto text-2xl">Player - {playerSum}</h1>
         </div>
 
-        <div className="col-start-2  md:row-start-3 lg:row-start-1 lg:col-start-3   mt-4 mr-4 md:mr-0   flex justify-center  items-center  lg:mr-0 lg:flex-col lg:content-end">
+        <div className="col-start-2  md:row-start-3 lg:row-start-1 lg:col-start-3   mt-4 md:mt-8 mr-4 md:mr-0 gap-4  flex justify-center  items-center  lg:mr-0 lg:flex-col lg:content-end">
           {isGameActive && playerSum > 0 && playerSum < 21 && (
             <button
               className="lg:px-8 hover:scale-110 mx-2 transition duration-200"
