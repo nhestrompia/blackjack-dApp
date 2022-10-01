@@ -68,6 +68,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
 
   const withdrawBet = async () => {
     try {
+      setLoading(false)
       const signer = library?.getSigner()
 
       const blackjackContract = new Contract(
@@ -154,6 +155,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           setRoundText(["Wait for", `Evaluation`])
         }
         setIsGameActive(false)
+        setLoading(true)
       }, 2000)
     }
   }, [isGameEnded])
@@ -436,12 +438,6 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
 
   const startGame = async () => {
     try {
-      const tempDeck = constructDeck()
-      // setIsGameEnded(false)
-      setScore(0)
-      setIsGameActive(true)
-      setIsCanWithdraw(false)
-
       const signer = library?.getSigner()
 
       const blackjackContract = new Contract(
@@ -461,11 +457,16 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
           error: "Something went wrong 🤯",
         }
       )
+
       setLoading(true)
 
       const confirmation = await library.waitForTransaction(tx.hash)
 
       setLoading(false)
+      const tempDeck = constructDeck()
+      setScore(0)
+      setIsGameActive(true)
+      setIsCanWithdraw(false)
 
       dealCards(tempDeck)
     } catch (err) {
