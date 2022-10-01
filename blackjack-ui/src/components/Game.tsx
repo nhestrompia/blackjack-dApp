@@ -34,6 +34,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
   const [roundText, setRoundText] = useState<string[]>([])
   const [isCanWithdraw, setIsCanWithdraw] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [isGameEnded, setIsGameEnded] = useState<boolean>(false)
 
   const effectRan = useRef(false)
 
@@ -42,6 +43,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
       setRoundText([])
       setIsCanWithdraw(false)
       setIsGameActive(false)
+      setIsGameEnded(false)
       setPlayerCards([])
       setHouseCards([])
       setHouseSum(0)
@@ -97,12 +99,64 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         const confirmation = await library.waitForTransaction(tx.hash)
       }
       setRoundText(["Play", "Again"])
-
+      setIsGameEnded(false)
       setIsCanWithdraw(false)
     } catch (err) {
       console.error(err)
     }
   }
+
+  useEffect(() => {
+    if (isGameEnded === true) {
+      unlockBet()
+      window.setTimeout(() => {
+        if (score! > 0) {
+          toast.info(
+            "You have won the game and extra 0.01 ETH! Wait for withdraw button to come",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
+          setRoundText(["Wait for", `Evaluation`])
+        } else if (score === 0) {
+          toast.info(
+            "It was a close game but it ended in tie. Wait for withdraw button to come to get back your initial bet",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
+          setRoundText(["Wait for", `Evaluation`])
+        } else {
+          toast.info(
+            "It was a close game but you have lost it. Play again to earn back your 0.01 ETH ",
+            {
+              position: "top-center",
+              autoClose: 5000,
+              hideProgressBar: true,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: 0,
+            }
+          )
+          setRoundText(["Wait for", `Evaluation`])
+        }
+        setIsGameActive(false)
+      }, 2000)
+    }
+  }, [isGameEnded])
 
   useEffect(() => {
     if (isGameActive === false) {
@@ -292,7 +346,6 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
       setCurrentDeck(deckData)
 
       if (deckData.length <= 4 && playerCards.length < 2) {
-        // unlockBet()
         setIsGameActive(false)
         setIsStand(true)
         toast.error("No more cards left. This is the final round!", {
@@ -355,54 +408,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         dealCards(tempDeck)
       }, 2000)
     } else {
-      unlockBet()
-
-      window.setTimeout(() => {
-        if (score! > 0) {
-          toast.info(
-            "You have won the game and extra 0.01 ETH! Wait for withdraw button to come",
-            {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: 0,
-            }
-          )
-          setRoundText(["Wait for", `Evaluation`])
-        } else if (score === 0) {
-          toast.info(
-            "It was a close game but it ended in tie. Wait for withdraw button to come to get back your initial bet",
-            {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: 0,
-            }
-          )
-          setRoundText(["Wait for", `Evaluation`])
-        } else {
-          toast.info(
-            "It was a close game but you have lost it. Play again to earn back your 0.01 ETH ",
-            {
-              position: "top-center",
-              autoClose: 5000,
-              hideProgressBar: true,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: 0,
-            }
-          )
-          setRoundText(["Wait for", `Evaluation`])
-        }
-        setIsGameActive(false)
-      }, 2000)
+      setIsGameEnded(true)
     }
   }
 
@@ -431,6 +437,7 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
   const startGame = async () => {
     try {
       const tempDeck = constructDeck()
+      // setIsGameEnded(false)
       setScore(0)
       setIsGameActive(true)
       setIsCanWithdraw(false)
@@ -473,8 +480,12 @@ export const Game: React.FC<IProps> = ({ library, account }) => {
         id="page"
       >
         <div className=" lg:col-start-1 pt-5 md:mt-0 items-center flex flex-col ">
-          {isGameActive && (
-            <h1 className="text-2xl  -mt-8">Player score : {score}</h1>
+          {isGameActive ? (
+            <h1 className="text-3xl pb-4 ">Player score : {score}</h1>
+          ) : isGameEnded ? (
+            <h1 className="text-3xl pb-5 ">Player score : {score}</h1>
+          ) : (
+            ""
           )}
           <h1></h1>
 
