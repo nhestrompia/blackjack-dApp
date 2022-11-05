@@ -5,7 +5,7 @@ pragma solidity ^0.8.6;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
-
+// Contract address : 0x040B4620C0889C438cFbAbe3971DB831B12629e5
 
 contract Blackjack is Ownable {
 
