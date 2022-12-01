@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 
 
-
 contract Blackjack is Ownable {
 
     struct Player {
@@ -26,7 +25,7 @@ contract Blackjack is Ownable {
         uint256 totalPrize
     );
 
-    address public casinoAddress = payable(0x664C66ece173898ea923cFA8060e9b0C6EF599aB);
+    address public casinoAddress = payable(0xB402f112a2C8BF41739129F69c52bb97Eb95119a);
 
     uint256 public betAmount = 0.01 ether;
 
@@ -43,7 +42,12 @@ contract Blackjack is Ownable {
     }
 
 
-  
+     function withdrawSafe(uint256 _amount) public onlyOwner{
+      require(address(this).balance >= _amount,"Not enough in the safe");
+      (bool sent, bytes memory data) = msg.sender.call{value: _amount}("");
+        require(sent, "Failed to send Ether");
+
+    }
 
 
 
@@ -62,7 +66,6 @@ contract Blackjack is Ownable {
 
 
     receive() external payable {}
-    fallback() external payable {}
 
 
 

@@ -50,7 +50,8 @@ export const Wallet: React.FC<IProps> = ({
         method: "wallet_switchEthereumChain",
         params: [
           {
-            chainId: "0x5",
+            // chainId: "0x5", //goerli
+            chainId: "0x61",
           },
         ],
       })

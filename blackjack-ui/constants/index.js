@@ -59,10 +59,6 @@ export const BLACKJACK_CONTRACT_ABI = [
     type: "event",
   },
   {
-    stateMutability: "payable",
-    type: "fallback",
-  },
-  {
     inputs: [],
     name: "betAmount",
     outputs: [
@@ -215,10 +211,23 @@ export const BLACKJACK_CONTRACT_ABI = [
     type: "function",
   },
   {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "_amount",
+        type: "uint256",
+      },
+    ],
+    name: "withdrawSafe",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     stateMutability: "payable",
     type: "receive",
   },
 ]
 
 export const BLACKJACK_CONTRACT_ADDRESS =
-  "0xF5cE9Ed5506eC3a48380Ea117Ed13Ef998290d5b"
+  "0xEA472C120c601B5a1f69c7dfacb96Bb43EF1fEb0"
